@@ -8,11 +8,8 @@
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="MonoMod.RuntimeDetour.HookGen" Version="22.7.31.1" />
     <PackageReference Include="UnityEngine.Modules" Version="2020.3.44" IncludeAssets="compile" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ref\" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
@@ -25,6 +22,9 @@
   	</Reference>
   	<Reference Include="com.unity.multiplayer-hlapi.Runtime">
   	  <HintPath>ref\com.unity.multiplayer-hlapi.Runtime-nstrip.dll</HintPath>
+  	</Reference>
+  	<Reference Include="MMHOOK_Assembly-CSharp">
+  	  <HintPath>ref\MMHOOK_Assembly-CSharp.dll</HintPath>
   	</Reference>
   	<Reference Include="Unity.InputSystem">
   	  <HintPath>ref\Unity.InputSystem-nstrip.dll</HintPath>
