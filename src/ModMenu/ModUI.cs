@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using CementTools.Modules.NotificationModule;
 
 namespace CementTools.ModMenuTools
 {
@@ -49,29 +50,46 @@ namespace CementTools.ModMenuTools
             UpdateHeight();
         }
 
+        bool turningOn;
         // tries to toggle a mod
         public void ToggleMod()
         {   
+            // prevents refire when forcefully keeping a mod enabled
+            if (turningOn) return;
+            
             // if toggling on, it will enable all required mods
             // when toggling off it loops through all the mods dependant on it, and checks if all of them are disabled
             // before disabling it
             if (modFileToggle.isOn)
             {
+                bool ran = false;
                 foreach (ModFile required in modFile.requiredMods)
                 {
                     CementTools.Cement.Log($"REQUIRED: {required.path}");
                     ModMenu.Singleton.SetModActive(required, true);
-                } 
+                    ran = true;
+                }
+                if (ran)
+                {
+                    string modName = modFile.GetString("Name");
+                    NotificationModule.Send($"{modName}", $"{modName} requires other mods in order to work, so they were automatically turned on for you. You're welcome!", 4f);
+                }
             }
             else
             {
                 foreach (ModFile required in modFile.requiredBy)
                 {
                     if (!required.GetBool("Disabled"))
-                    {   
+                    {
                         CementTools.Cement.Log($"REQUIRED BY: {required.path}");
+                        turningOn = true;
                         modFileToggle.isOn = true;
                         modFile.SetBool("Disabled", false);
+                        turningOn = false;
+
+                        string modName = modFile.GetString("Name");
+                        string requiredName = required.GetString("Name");
+                        NotificationModule.Send($"Can't disable {modName}", $"{modName} is required by {requiredName} in order to function correctly.", 4f);
                         return;
                     }
                 }
