@@ -1,6 +1,7 @@
 using BepInEx;
 using CementTools.ModLoading;
 using CementTools.ModMenuTools;
+using CementTools.Modules.NotificationModule;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -112,21 +113,6 @@ namespace CementTools
             }
         }
 
-        public static string HIDDEN_MODS_PATH
-        {
-            get
-            {
-                string path = Path.Combine(MODS_FOLDER_PATH, ".hidden mods");
-                if (!Directory.Exists(path))
-                {
-                    DirectoryInfo hidden = Directory.CreateDirectory(path);
-                    hidden.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
-                }
-
-                return path;
-            }
-        }
-
         public static string CEMENT_PATH
         {
             get
@@ -209,7 +195,7 @@ namespace CementTools
                 }
                 if (ModsPresent())
                 {
-                    DownloadManager.DownloadAllModFiles((Action<bool>)delegate (bool succeeded2)
+                    DownloadManager.DownloadAllModFiles(delegate (bool succeeded2)
                     {
                         Cement.Log($"DONE DOWNLOADING ALL MOD FILES. DID SUCCEED? {succeeded2}");
                         if (succeeded2)
@@ -220,6 +206,7 @@ namespace CementTools
                         {
                             summaryText += $"\n\n{FAILED_TAG}Failed to download all required mods. Try restarting your game, or make sure you have a good internet connection.</color>\n\n";
                             if (cementGUI != null) Destroy(cementGUI);
+                            Cement.Singleton.CreateSummary();
                         }
                     });
                 }
@@ -733,7 +720,6 @@ namespace CementTools
         public static void ClearCache()
         {
             IOExtender.DeleteFilesInDirectory(CACHE_PATH);
-            IOExtender.DeleteFilesInDirectory(HIDDEN_MODS_PATH);
             foreach (CementMod mod in CementModSingleton.GetAll())
             {
                 if (File.Exists(mod.modFile.path))

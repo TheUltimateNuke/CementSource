@@ -64,11 +64,6 @@ namespace CementTools.Modules.NotificationModule
 
         private void Update()
         {
-            if (notificationsQueue.Count > 0)
-                Cement.Singleton.UseCementEventSystem();
-            else
-                Cement.Singleton.RevertEventSystem();
-            
             foreach (var notification in notificationsQueue.ToArray())
             {
                 if (activeNotifications.Count >= maxActiveNotifications) break;

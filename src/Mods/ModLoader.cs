@@ -37,6 +37,7 @@ namespace CementTools.ModLoading
                 CementTools.Cement.Log("CREATED MOD FILE. LOADING DLLS...");
                 LoadModAssemblies(subDirectory, modFile);
                 CementTools.Cement.Log("FINISHED LOADING DLLS");
+                modFile.GotLoaded();
             }
 
             CementTools.Cement.Singleton.CreateSummary();

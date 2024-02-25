@@ -84,6 +84,30 @@ public class ModFile
     public ModFile[] requiredMods => _requiredMods;
     public ModFile[] requiredBy => _requiredBy.ToArray();
 
+    private bool _isBad = false;
+
+    // used to check if a mod was flagged as bad. Check FlagAsBad method.
+    public bool IsBad
+    {
+        get
+        {
+            return _isBad;
+        }
+        private set {
+            _isBad = value;
+        }
+    }
+
+    private bool _isLoaded = false;
+
+    public bool IsLoaded
+    {
+        get
+        {
+            return _isLoaded;
+        }
+    }
+
     public static ModFile[] All
     {
         get
@@ -120,6 +144,17 @@ public class ModFile
         }
         _modFiles[path] = new ModFile(path);
         return _modFiles[path];
+    }
+
+    // Used to show Cement that if a mod was badly formatted or failed to load previously, it isn't used again by other steps
+    public void FlagAsBad()
+    {
+        IsBad = true;
+    }
+
+    public void GotLoaded()
+    {
+        _isLoaded = true;
     }
 
     public void AddRequiredBy(ModFile file)
@@ -329,10 +364,12 @@ public class ModFile
                 continue;
             }
 
-            ModFileParameter parameter = new ModFileParameter();
-            parameter.value = value;
-            parameter.key = key;
-            parameter.attributes = attributes.ToArray();
+            ModFileParameter parameter = new ModFileParameter
+            {
+                value = value,
+                key = key,
+                attributes = attributes.ToArray()
+            };
             modFileParameters.Add(parameter);
         }
 

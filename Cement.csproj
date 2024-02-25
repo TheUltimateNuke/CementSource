@@ -40,5 +40,7 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="COPY &quot;$(TargetPath)&quot; &quot;.\build\BepInEx\plugins\Cement\&quot;" />
     <Exec Command="COPY .\build\* &quot;D:\SteamLibrary\steamapps\common\Gang Beasts\&quot;" />
+
+    <Exec Command="COPY &quot;$(TargetPath)&quot; &quot;D:\SteamLibrary\steamapps\common\Gang Beasts\BepInEx\plugins\Cement\&quot;" />
   </Target>
 </Project>

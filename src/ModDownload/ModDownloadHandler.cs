@@ -121,10 +121,11 @@ public class ModDownloadHandler
         string name = modFile.GetString("Name");
         string author = modFile.GetString("Author");
 
-        if (name == null || author == null)
+        if (name == null || author == null || modFile.IsBad)
         {
             data.name = "Unknown";
             data.message = null;
+            modFile.FlagAsBad();
             callback.Invoke(data);
             return;
         }
@@ -139,7 +140,6 @@ public class ModDownloadHandler
         }
 
         data.name = name;
-        Cement.Log($"MESSAGE {modMessage}");
         data.message = modMessage;
 
         string directoryName = $"{LinkHelper.ToUsableName(author)}.{LinkHelper.ToUsableName(name)}";
@@ -147,7 +147,7 @@ public class ModDownloadHandler
 
 
         Cement.Log($"GETTING LATEST VERSION FOR {_pathToMod}...");
-        if (CementTools.Cement.HasInternet)
+        if (Cement.HasInternet)
         {
             latestVersion = GetLatestVersion(modFile.GetString("LatestVersion"));
         }
@@ -161,6 +161,7 @@ public class ModDownloadHandler
             Cement.Log("FAILED!");
             OnProgress(100f);
             callback.Invoke(data);
+            modFile.FlagAsBad();
             return;
         }
         latestVersion = latestVersion.Replace("\n", "");
@@ -245,6 +246,11 @@ public class ModDownloadHandler
 
     private async Task<bool> DownloadLinks(string links, string directoryName)
     {
+        if (links == null)
+        {
+            return false;
+        }
+
         string directoryPath = Path.Combine(CementTools.Cement.CACHE_PATH, directoryName);
 
         if (Directory.Exists(directoryPath))

@@ -66,8 +66,11 @@ namespace CementTools.ModMenuTools
                 foreach (ModFile required in modFile.requiredMods)
                 {
                     CementTools.Cement.Log($"REQUIRED: {required.path}");
-                    ModMenu.Singleton.SetModActive(required, true);
-                    ran = true;
+                    if (required.GetBool("Disabled"))
+                    {
+                        ModMenu.Singleton.SetModActive(required, true);
+                        ran = true;
+                    }
                 }
                 if (ran)
                 {

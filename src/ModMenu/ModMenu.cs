@@ -17,6 +17,9 @@ namespace CementTools.ModMenuTools
         }
 
         private GameObject MODMENU;
+
+        public GameObject modMenuCanvas => MODMENU;
+
         private ModFile[] modFiles;
         private GameObject _modUIPrefab;
         private readonly Dictionary<ModFile, ModUI> _modUIs = new Dictionary<ModFile, ModUI>();
@@ -82,6 +85,10 @@ namespace CementTools.ModMenuTools
         {
             foreach (ModFile mod in modFiles)
             {   
+                if (mod.IsBad || !mod.IsLoaded)
+                {
+                    continue;
+                }
                 CementTools.Cement.Log($"Creating UI for mod {mod.path}");
                 CreateUIForMod(mod);
             }
@@ -149,7 +156,7 @@ namespace CementTools.ModMenuTools
 
         public void Enable()
         {
-            CementTools.Cement.Singleton.UseCementEventSystem();
+            Cement.Singleton.UseCementEventSystem();
             MODMENU.SetActive(true);
         }
 
@@ -187,7 +194,7 @@ namespace CementTools.ModMenuTools
             }
             
             ToggleRelevantMods();
-            CementTools.Cement.Singleton.RevertEventSystem();
+            Cement.Singleton.RevertEventSystem();
         }
     }
 }
