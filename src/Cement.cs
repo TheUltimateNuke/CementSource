@@ -255,7 +255,7 @@ namespace CementTools
             Logger.Log(logLevel, o);
         }
 
-        public static void Log(object o, BepInEx.Logging.LogLevel logLevel=BepInEx.Logging.LogLevel.Info) // TODO: Add log levels, like ERROR, WARNING, etc.
+        public static void Log(object o, BepInEx.Logging.LogLevel logLevel=BepInEx.Logging.LogLevel.Info)
         {
             Singleton.InternalLog(o, logLevel);
         }
