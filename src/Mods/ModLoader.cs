@@ -18,7 +18,7 @@ namespace CementTools.ModLoading
         private static void LoadAllModules()
         {
             modHolder.AddComponent<InputManager>();
-            modHolder.AddComponent<CustomSceneManager>();
+            modHolder.AddComponent<SceneModule>();
             modHolder.AddComponent<Pool>();
             modHolder.AddComponent<NotificationModule>();
             modHolder.AddComponent<HookModule>();
