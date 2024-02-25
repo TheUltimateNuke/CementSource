@@ -1,4 +1,5 @@
 using CementTools.ModMenuTools;
+using CementTools.Modules.HookModule;
 using CementTools.Modules.InputModule;
 using CementTools.Modules.NotificationModule;
 using CementTools.Modules.PoolingModule;
@@ -20,6 +21,7 @@ namespace CementTools.ModLoading
             modHolder.AddComponent<CustomSceneManager>();
             modHolder.AddComponent<Pool>();
             modHolder.AddComponent<NotificationModule>();
+            modHolder.AddComponent<HookModule>();
         }
 
         public static void Setup()

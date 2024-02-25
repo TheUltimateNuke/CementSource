@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace CementTools.Modules.HookModule
@@ -8,7 +9,7 @@ namespace CementTools.Modules.HookModule
     /// Mods should use this for private getters, setters, and methods that can't be hooked with BepInEx.MonoMod.HookGenPatcher
     /// or if the mod's hook needs to be disabled once the mod is toggled off in-game.
     /// </summary>
-    public static class HookModule
+    public class HookModule : CementMod
     {
         /// <summary>
         /// A struct containing information required to create toggleable Harmony "hooks", or patches, with Cement.
@@ -20,15 +21,16 @@ namespace CementTools.Modules.HookModule
             public MethodInfo hook;
             public bool isPrefix;
 
-            public CementHook(MethodInfo original, CementMod mod, MethodInfo hook, bool isPrefix) : this()
+            public CementHook(MethodInfo original, MethodInfo hook, CementMod callingMod, bool isPrefix = false) : this()
             {
                 this.original = original;
-                callingMod = mod;
+                this.callingMod = callingMod;
                 this.hook = hook;
                 this.isPrefix = isPrefix;
             }
         }
-        private static readonly Harmony defaultHarmony;
+
+        private static readonly Dictionary<string, Harmony> modHarmonies = new Dictionary<string, Harmony>();
 
         /// <summary>
         /// Create a hook on a method that will toggle on and off with the passed CementMod.
@@ -36,23 +38,29 @@ namespace CementTools.Modules.HookModule
         /// <param name="hook">The <see cref="CementHook"/> info to patch with.</param>
         public static void CreateHook(CementHook hook)
         {
-            Harmony modHarmony = new Harmony(hook.callingMod.name);
+            Harmony modHarmony = modHarmonies[hook.callingMod.name] ?? new Harmony(hook.callingMod.name);
+            if (!modHarmonies.ContainsKey(modHarmony.Id)) modHarmonies.Add(modHarmony.Id, modHarmony);
 
-            HarmonyMethod prefix = hook.isPrefix ? new HarmonyMethod(hook.hook) : null;
-            HarmonyMethod postfix = hook.isPrefix ? null : new HarmonyMethod(hook.hook);
-            modHarmony.Patch(hook.original, prefix, postfix);
+            EnableHook(hook);
             hook.callingMod.modFile.ChangedValues += () =>
             {
-                if (hook.callingMod.modFile.GetBool("Disabled"))
-                    RemoveHook(hook);
+                if (hook.callingMod.modFile.GetBool("Disabled")) DisableHook(hook);
+                else EnableHook(hook);
             };
 
-            CementTools.Cement.Log($"New {(hook.isPrefix ? "PREFIX" : "POSTFIX")} hook on {hook.original.DeclaringType.Name}.{hook.original.Name} to {hook.hook.DeclaringType.Name}.{hook.hook.Name}");
+            Cement.Log($"New {(hook.isPrefix ? "PREFIX" : "POSTFIX")} hook on {hook.original.DeclaringType.Name}.{hook.original.Name} to {hook.hook.DeclaringType.Name}.{hook.hook.Name}");
         }
 
-        public static void RemoveHook(CementHook hook)
+        private static void EnableHook(CementHook hook)
         {
-            defaultHarmony.Unpatch(hook.original, hook.hook);
+            HarmonyMethod prefix = hook.isPrefix ? new HarmonyMethod(hook.hook) : null;
+            HarmonyMethod postfix = hook.isPrefix ? null : new HarmonyMethod(hook.hook);
+            modHarmonies[hook.callingMod.name].Patch(hook.original, prefix, postfix);
+        }
+
+        private static void DisableHook(CementHook hook)
+        {
+            modHarmonies[hook.callingMod.name].Unpatch(hook.original, hook.hook);
         }
     }
 }

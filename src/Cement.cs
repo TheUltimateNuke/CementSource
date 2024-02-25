@@ -1,7 +1,7 @@
 using BepInEx;
 using CementTools.ModLoading;
 using CementTools.ModMenuTools;
-using CementTools.Modules.NotificationModule;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -341,7 +341,7 @@ namespace CementTools
                 _cementEventSystem = mainObject.GetComponent<EventSystem>();
                 InputSystemUIInputModule inputModule = mainObject.GetComponent<InputSystemUIInputModule>();
 
-                FieldInfo currentModule = typeof(EventSystem).GetField("m_CurrentInputModule", BindingFlags.NonPublic | BindingFlags.Instance);
+                FieldInfo currentModule = typeof(EventSystem).GetField("m_CurrentInputModule", AccessTools.all);
                 currentModule.SetValue(_cementEventSystem, inputModule);
 
                 _cementEventSystem.enabled = true;
