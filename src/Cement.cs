@@ -55,7 +55,7 @@ namespace CementTools
         string summaryText = $"{FAILED_TAG}<b>IMPORTANT! PLEASE READ!</b></color>\n\nNote: if a mod failed to process, make sure you have a good internet connection or try restarting your game." +
         " If it still doesn't work open the 'Cement' menu from the main menu and clear your cache. If that doesn't work then there is a problem with the mod file, which the mod's creator must fix.\n\n" +
         "If you want assistance with trying to get your mods to work, go to <link=\"website\"><u>our website</u></link>, and join the discord server. " +
-        "There is a #modding-questions channel.\n\nAlso everything the Cement Team does is for free. All of us are students or work full time, so we would be really grateful "
+        "There is a #mod-help channel.\n\nAlso everything the Cement Team does is for free. All of us are students or work full time, so we would be really grateful "
         + "if you bought us a coffee, with the following link: <link=\"coffee\"><u>CLICK ME!</u></link>.\n\n";
 
         Slider progressBar;
@@ -137,7 +137,6 @@ namespace CementTools
         {
             _singleton = this;
             DontDestroyOnLoad(_singleton);
-            HarmonyLib.Harmony.CreateAndPatchAll(typeof(Patches.Patch_Credits));
             LoadCement();
             HarmonyLib.Harmony.CreateAndPatchAll(typeof(Patches.Patch_Credits));
         }
